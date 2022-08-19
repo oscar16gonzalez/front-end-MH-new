@@ -26,6 +26,10 @@ export class NotificationsComponent implements OnInit {
   mensaje = '';
   correo = '';
   selectedDevice
+  colorStyle = ''
+  idUser;
+  listMessageReceived: any = [];
+  listMessageSend: any = [];
 
   constructor(private fb: FormBuilder, private service_user: UserService, @Inject(DOCUMENT) private document: Document) { }
   showNotification(from, align) {
@@ -58,7 +62,7 @@ export class NotificationsComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.idUser = JSON.parse(localStorage.getItem('infoUser'));
     this.createFrom();
     this.service_user.getUsers().subscribe((data: any) => {
       console.log("INFO USUARIOS", data);
@@ -70,14 +74,16 @@ export class NotificationsComponent implements OnInit {
       console.log("INFO NOTIFICACIONES", data);
       this.notification = data;
       for (let index = 0; index < this.notification.length; index++) {
-        const element = this.notification[index].estado;
-        if (element === 'urgente') {
-          console.log("COLOR ROJO");
-        } else if (element === 'prioridad') {
-          console.log("COLOR ROJO");
-        } else {
-          console.log("COLOR AZUL");
-        }
+        const element = this.notification[index];
+        console.log("ID", element.id_recibe);
+        console.log("ID_", this.idUser._id);
+
+        if (element.id_recibe === this.idUser._id) {
+          this.listMessageReceived.push(element)
+          console.log("********", this.listMessageReceived);
+        } else if (element.id_envia === this.idUser._id) {
+            this.listMessageSend.push(element);
+          }
       }
     })
 
@@ -96,46 +102,41 @@ export class NotificationsComponent implements OnInit {
   }
 
   createMessage() {
-    const idUser = JSON.parse(localStorage.getItem('infoUser'));
-    const _nombre_recibe = '';
-    const _id_recibe = '';
-
+    console.log(this.formCreateMessage.valid);
     for (let index = 0; index < this.listaUser.length; index++) {
       const element = this.listaUser[index];
       if (element._id === this.formCreateMessage.value.users) {
         this._notificationDataMessage = {
-          "nombre_envia": this.listaUser[index].nombre,
-          "nombre_recibe": _nombre_recibe,
+          "nombre_envia": this.idUser.nombre,
+          "nombre_recibe": this.listaUser[index].nombre,
           "mensaje": this.formCreateMessage.value.message,
           "asunto": this.formCreateMessage.value.title,
-          "id_envia": idUser._id,
+          "id_envia": this.idUser._id,
           "id_recibe": this.listaUser[index]._id,
           "estado": this.formCreateMessage.value.estado,
-          "correo_envia": idUser.correo,
+          "correo_envia": this.idUser.correo,
           "correo_recibe": this.listaUser[index].correo,
           "celular_recibe": this.listaUser[index].celular,
         }
         console.log(this._notificationDataMessage);
       }
     }
+
     this.service_user.createNotification(this._notificationDataMessage).subscribe((responseData: any) => {
       console.log("RESPUESTA CREACION NOTIFICACION", responseData);
-
+      if (responseData.message === 'Notificacion successfuly saved') {
+        if (this.formCreateMessage.value.metodo === 'correo') {
+          this.document.location.href = `mailto:${this._notificationDataMessage.correo_recibe}?subject=${this._notificationDataMessage.asunto}%20%3A%20&body=${this._notificationDataMessage.mensaje}.`
+          alertify.alert('Mensaje enviado correctamente');
+          window.location.reload();
+        } else if (this.formCreateMessage.value.metodo === 'whatsApp') {
+          this.document.location.href = `https://api.whatsapp.com/send?phone=+57${this._notificationDataMessage.celular_recibe}&text=${this.formCreateMessage.value.message}.`
+          window.location.reload();
+        }
+      } else {
+        alertify.alert('Error al crear el mensaje');
+      }
     });
-    if (this.formCreateMessage.value.metodo === 'correo') {
-      this.document.location.href = `mailto:${this._notificationDataMessage.correo_envia}?subject=${this._notificationDataMessage.asunto}%20%3A%20&body=${this._notificationDataMessage.mensaje}.`
-      alertify.alert('Mensaje enviado correctamente', function () { alertify.error('Ok'); });
-    } else if (this.formCreateMessage.value.metodo === 'whatsApp') {
-      this.document.location.href = `https://api.whatsapp.com/send?phone=+57${this._notificationDataMessage.celular_recibe}&text=${this.formCreateMessage.value.message}.`
-      alertify.alert('Mensaje enviado correctamente', function () { alertify.error('Ok'); });
-    }
-  }
-
-  change(event) {
-    this.selectedDevice = event;
-
-    console.log("ITEM"), event;
-
   }
 
   // sendWhatsapp() {

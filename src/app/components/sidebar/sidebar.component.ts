@@ -18,9 +18,9 @@ declare interface RouteInfo {
     { path: '/user-profile', title: 'Perfil de Usuario',  icon:'person', class: '' },
     { path: '/user-attendance', title: 'Asistencia De Usuarios',  icon:'verified_user', class: '' },
     { path: '/', title: 'Salir del Sistema',  icon:'arrow_back_ios', class: 'active-pro' },
+    { path: '/notifications', title: 'Notificaciones',  icon:'notifications', class: '' },
     // { path: '/icons', title: 'Icons',  icon:'bubble_chart', class: '' },
     // { path: '/maps', title: 'Maps',  icon:'location_on', class: '' },
-    // { path: '/notifications', title: 'Notificaciones',  icon:'notifications', class: '' },
     // { path: '/upgrade', title: 'Upgrade to PRO',  icon:'unarchive', class: 'active-pro' },
   ];
 
@@ -32,11 +32,11 @@ declare interface RouteInfo {
     { path: '/user-profile', title: 'Perfil de Usuario',  icon:'person', class: '' },
     { path: '/user-attendance', title: 'Asistencia De Usuarios',  icon:'verified_user', class: '' },
     { path: '/payroll-settings', title: 'Configurar Nomina',  icon:'monetization_on', class: '' },
+    { path: '/notifications', title: 'Notificaciones',  icon:'notifications', class: '' },
+    { path: '/', title: 'Salir del Sistema',  icon:'arrow_back_ios', class: 'active-pro' },
     // { path: '/upgrade', title: 'Upgrade to PRO',  icon:'unarchive', class: '' },
     // { path: '/icons', title: 'Icons',  icon:'bubble_chart', class: '' },
     // { path: '/maps', title: 'Maps',  icon:'location_on', class: '' },
-    { path: '/notifications', title: 'Notificaciones',  icon:'notifications', class: '' },
-    { path: '/', title: 'Salir del Sistema',  icon:'arrow_back_ios', class: 'active-pro' },
   ];
 
 
